@@ -149,3 +149,45 @@ export function useSetPaystackKey() {
     },
   });
 }
+
+export function useIsCallerAdmin() {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ["isCallerAdmin"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerAdmin();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useAllTransactions(isAdmin: boolean) {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ["allTransactions"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllTransactions();
+    },
+    enabled: !!actor && !isFetching && isAdmin,
+  });
+}
+
+export function useSendNotification() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async ({
+      title,
+      message,
+      user,
+    }: {
+      title: string;
+      message: string;
+      user: null;
+    }) => {
+      if (!actor) throw new Error("Not connected");
+      return actor.sendNotification(title, message, user);
+    },
+  });
+}

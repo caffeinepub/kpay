@@ -12,6 +12,7 @@ import {
   KeyRound,
   Loader2,
   LogOut,
+  Shield,
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -22,6 +23,7 @@ import type { UserProfile } from "../../backend.d";
 import { formatNaira } from "../../data/nigerianData";
 import { useInternetIdentity } from "../../hooks/useInternetIdentity";
 import {
+  useIsCallerAdmin,
   useIsPaystackConfigured,
   useSetPaystackKey,
 } from "../../hooks/useQueries";
@@ -44,6 +46,7 @@ export function Profile({ profile, onNavigate, onSignOut }: ProfileProps) {
   const [showKey, setShowKey] = useState(false);
 
   const { data: isConfigured } = useIsPaystackConfigured();
+  const { data: isAdmin } = useIsCallerAdmin();
   const setKeyMutation = useSetPaystackKey();
 
   const initials = profile.name
@@ -154,6 +157,51 @@ export function Profile({ profile, onNavigate, onSignOut }: ProfileProps) {
               </div>
             </div>
           </motion.div>
+
+          {/* Admin Dashboard Button */}
+          {isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <button
+                type="button"
+                data-ocid="profile.admin.button"
+                onClick={() => onNavigate("admin")}
+                className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all active:scale-[0.98]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(245,166,35,0.15) 0%, rgba(232,149,42,0.08) 100%)",
+                  border: "1px solid rgba(245,166,35,0.35)",
+                  boxShadow:
+                    "0 4px 20px rgba(245,166,35,0.15), inset 0 1px 0 rgba(245,166,35,0.1)",
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{
+                    background: "rgba(245,166,35,0.2)",
+                    boxShadow: "0 2px 10px rgba(245,166,35,0.3)",
+                  }}
+                >
+                  <Shield size={18} style={{ color: "#F5A623" }} />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-bold" style={{ color: "#F5A623" }}>
+                    Admin Dashboard
+                  </p>
+                  <p className="text-xs opacity-50">
+                    System overview & controls
+                  </p>
+                </div>
+                <ChevronRight
+                  size={16}
+                  style={{ color: "#F5A623", opacity: 0.7 }}
+                />
+              </button>
+            </motion.div>
+          )}
 
           {/* Settings */}
           <motion.div

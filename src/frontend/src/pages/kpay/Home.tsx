@@ -108,10 +108,11 @@ export function Home({ profile, userName, onNavigate }: HomeProps) {
             <button
               type="button"
               data-ocid="home.notification.button"
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90"
               style={{
                 background: "rgba(245,166,35,0.1)",
                 border: "1px solid rgba(245,166,35,0.2)",
+                boxShadow: "0 4px 12px rgba(245,166,35,0.12)",
               }}
             >
               <Bell size={18} style={{ color: "#F5A623" }} />
@@ -150,6 +151,8 @@ export function Home({ profile, userName, onNavigate }: HomeProps) {
                 data-ocid={`home.${action.id}.button`}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.06, y: -2 }}
+                whileTap={{ scale: 0.92, y: 2 }}
                 transition={{ delay: 0.2 + i * 0.05 }}
                 onClick={() => onNavigate(action.screen)}
                 className="flex flex-col items-center gap-2"
@@ -158,8 +161,8 @@ export function Home({ profile, userName, onNavigate }: HomeProps) {
                   className="w-14 h-14 rounded-2xl flex items-center justify-center"
                   style={{
                     background: `${action.color}18`,
-                    border: `1px solid ${action.color}30`,
-                    boxShadow: `0 4px 20px ${action.color}20`,
+                    border: `1px solid ${action.color}35`,
+                    boxShadow: `0 6px 24px ${action.color}25, inset 0 1px 0 ${action.color}20`,
                   }}
                 >
                   <action.icon size={22} style={{ color: action.color }} />
@@ -199,13 +202,14 @@ export function Home({ profile, userName, onNavigate }: HomeProps) {
             style={{
               background: "rgba(20,27,66,0.5)",
               border: "1px solid rgba(255,255,255,0.07)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
             }}
           >
             {txList.map((tx, i) => (
               <div
                 key={tx.id}
                 data-ocid={`home.transactions.item.${i + 1}`}
-                className="flex items-center gap-3 px-4 py-3"
+                className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.02]"
                 style={{
                   borderBottom:
                     i < txList.length - 1
@@ -219,6 +223,9 @@ export function Home({ profile, userName, onNavigate }: HomeProps) {
                     background: tx.isDebit
                       ? "rgba(239,68,68,0.15)"
                       : "rgba(34,197,94,0.15)",
+                    boxShadow: tx.isDebit
+                      ? "0 2px 8px rgba(239,68,68,0.15)"
+                      : "0 2px 8px rgba(34,197,94,0.15)",
                   }}
                 >
                   {tx.isDebit ? (

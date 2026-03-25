@@ -1,37 +1,32 @@
 # KPAY
 
 ## Current State
-- KPAY is a Nigerian mobile banking app with mock transfers, airtime, bills, and transaction history.
-- Transfer screen does mock beneficiary lookup and stores a pending transaction on the backend.
-- Backend has http-outcalls capability but no real payment API integration.
-- No real money movement happens — all transfers are simulated.
+KPAY is a 3D-style mobile banking app with: splash, login/register (Internet Identity), home dashboard with virtual card, transfer (mock + Paystack), airtime/data, bill payments, transaction history, and profile. Authorization component installed with isCallerAdmin()/assignCallerUserRole(). Backend has getAllTransactions() and sendNotification() admin-only endpoints.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Paystack integration for real bank transfers via HTTP outcalls from the backend.
-- Bank code mapping for all 24 Nigerian banks (Paystack bank codes).
-- Real account name resolution: call Paystack `/bank/resolve` before proceeding.
-- Real transfer flow: create recipient on Paystack, then initiate transfer via `/transfer`.
-- Paystack secret key storage in the backend (admin-configurable).
-- A "Third Party Transfer" tab/option on the Transfer screen that uses Paystack.
-- In Profile page: a section to configure Paystack secret key (stored in backend).
-- Clear UI labels distinguishing "KPAY Internal Transfer" vs "Bank Transfer (Paystack)".
+- Admin dashboard screen (screen key: `admin`) — only accessible to the first logged-in user (who is the admin). Shows: system stats (total transactions, total volume), all transactions table, send notification form.
+- Admin entry point in Profile page: show "Admin Dashboard" button only when isCallerAdmin() returns true.
+- New queries: `useIsCallerAdmin()`, `useAllTransactions()`, `useSendNotification()`.
+- 3D visual enhancements throughout: deeper perspective transforms on cards, floating/levitating elements with CSS 3D, glowing depth shadows, 3D button press effect on quick-action buttons.
+- New professional logo at `/assets/generated/kpay-logo-pro-transparent.dim_300x300.png` — replace old logo across Splash, Login, and Register screens.
 
 ### Modify
-- Transfer screen: add tab switcher — "Send Money" (KPAY internal) and "Bank Transfer" (Paystack real).
-- Bank Transfer flow: replace mock lookup with real Paystack account resolution showing actual name.
-- PIN confirmation: after PIN, call backend `initiatePaystackTransfer` instead of `createTransfer`.
-- nigerianData.ts: add NIGERIAN_BANK_CODES map (bank name → Paystack bank code).
-- Backend: add `setPaystackKey`, `resolveAccount`, `initiatePaystackTransfer` functions.
-- Profile page: add "Developer / API Settings" card with Paystack key input for admin.
+- App.tsx: add `admin` to KPayScreen type; add admin screen routing; include admin in showBottomNav (false for admin screen).
+- Profile.tsx: add admin dashboard button (visible only when isCallerAdmin is true).
+- Splash.tsx, Login.tsx, Register.tsx: update logo src to new file.
+- Home.tsx, VirtualCard.tsx: enhance 3D depth effects — stronger perspective, layered box-shadows, floating animation.
+- BottomNav.tsx: add subtle 3D lift effect on active tab.
 
 ### Remove
 - Nothing removed.
 
 ## Implementation Plan
-1. Update backend main.mo: add Paystack key storage, account resolution HTTP outcall, transfer initiation HTTP outcall.
-2. Update nigerianData.ts: add bank codes map for all Nigerian banks.
-3. Update Transfer.tsx: add tab switcher (KPAY / Bank Transfer), real Paystack flow for Bank Transfer tab.
-4. Update Profile.tsx: add Paystack API key configuration section.
-5. Validate and build.
+1. Add `useIsCallerAdmin`, `useAllTransactions`, `useSendNotification` queries to useQueries.ts.
+2. Create `src/pages/kpay/AdminDashboard.tsx` with stats, all-transactions table, send-notification form.
+3. Update App.tsx to add `admin` screen type and routing.
+4. Update Profile.tsx to query isCallerAdmin and show admin nav button.
+5. Update Splash.tsx, Login.tsx, Register.tsx to use new logo path.
+6. Enhance 3D effects: Home.tsx (card perspective, floating), VirtualCard.tsx (3D depth), BottomNav.tsx (active lift).
+7. Validate and fix any type errors.

@@ -5,6 +5,7 @@ import { BottomNav } from "./components/kpay/BottomNav";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useUserProfile } from "./hooks/useQueries";
+import { AdminDashboard } from "./pages/kpay/AdminDashboard";
 import { Airtime } from "./pages/kpay/Airtime";
 import { Bills } from "./pages/kpay/Bills";
 import { History } from "./pages/kpay/History";
@@ -24,7 +25,8 @@ export type KPayScreen =
   | "airtime"
   | "bills"
   | "history"
-  | "profile";
+  | "profile"
+  | "admin";
 
 export default function App() {
   const [screen, setScreen] = useState<KPayScreen>("splash");
@@ -95,6 +97,8 @@ export default function App() {
             onSignOut={handleSignOut}
           />
         );
+      case "admin":
+        return <AdminDashboard onNavigate={setScreen} />;
       default:
         return <Splash onDone={() => setScreen("login")} />;
     }
